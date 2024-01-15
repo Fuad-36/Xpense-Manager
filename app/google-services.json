@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "250847942014",
+    "project_id": "xpense-manager-ef420",
+    "storage_bucket": "xpense-manager-ef420.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:250847942014:android:c8a9b5d19340ff63a80f2f",
+        "android_client_info": {
+          "package_name": "com.example.xpensemanager"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCV58XPNJHQC4LkfEHduebJcjDe1UzIA6w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
