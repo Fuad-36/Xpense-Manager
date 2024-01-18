@@ -117,7 +117,7 @@ fun CommonTopBar(navController: NavController, vm: XMViewModel) {
                     visible = true
                 }
             )
-            MonthPicker(
+            MonthYearPicker(
                 visible = visible,
                 currentMonth = currentMonth,
                 currentYear = currentYear,

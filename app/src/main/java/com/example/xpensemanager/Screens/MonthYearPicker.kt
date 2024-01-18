@@ -7,32 +7,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,161 +27,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.PointerIcon.Companion.Text
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.navigation.NavController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.xpensemanager.DestinationScreen
-import com.example.xpensemanager.R
-import com.example.xpensemanager.XMViewModel
 import com.google.accompanist.flowlayout.FlowCrossAxisAlignment
 import com.google.accompanist.flowlayout.MainAxisAlignment
 import com.google.accompanist.flowlayout.FlowRow
-import java.text.DateFormatSymbols
-import java.util.Calendar
-
-
-@Composable
-fun MonthYearDisplay(navController: NavController, vm: XMViewModel) {
-    var visible by remember { mutableStateOf(false) }
-    val currentDate = vm.selectedDate.value
-    var currentMonth by remember {
-        mutableStateOf(currentDate.get(Calendar.MONTH))
-    }
-    var currentYear by remember {
-        mutableStateOf(currentDate.get(Calendar.YEAR))
-    }
-    val months = listOf(
-        "JAN",
-        "FEB",
-        "MAR",
-        "APR",
-        "MAY",
-        "JUN",
-        "JUL",
-        "AUG",
-        "SEP",
-        "OCT",
-        "NOV",
-        "DEC"
-    )
-    var date by remember {
-        mutableStateOf(
-            "${months[currentDate.get(Calendar.MONTH)]} ${
-                currentDate.get(
-                    Calendar.YEAR
-                )
-            }"
-        )
-    }
-    // Get the current navBackStackEntry
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-
-    // Get the current destination route
-    val currentDestination = navBackStackEntry?.destination?.route
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(0.dp),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-
-        IconButton(onClick = {
-            if (currentDate.get(Calendar.MONTH) == 0) {
-                vm.updateMonthYear(11, currentYear - 1)
-            } else {
-                vm.updateMonthYear(currentMonth - 1, currentYear)
-            }
-//              Navigate to the current destination
-            currentDestination?.let { destination ->
-                navController.navigate(destination)
-            }
-        }) {
-            Icon(
-                painter = painterResource(id = R.drawable.previous),
-                contentDescription = null,
-                modifier = Modifier.size(20.dp).padding(0.dp)
-            )
-        }
-        Text(
-            text = date,
-            fontWeight = FontWeight.Bold,
-            color = Color(0XFF3864C3),
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .weight(1f)
-                .padding(0.dp)
-                .clickable {
-                    visible = true
-                }
-        )
-
-        MonthPicker(
-            visible = visible,
-            currentMonth = currentMonth,
-            currentYear = currentYear,
-            confirmButtonCLicked = { month_, year_ ->
-
-                visible = false
-                vm.updateMonthYear(month_, year_)
-//              Navigate to the current destination
-                currentDestination?.let { destination ->
-                    navController.navigate(destination)
-                }
-            },
-            cancelClicked = {
-                visible = false
-            }
-        )
-
-        IconButton(onClick = {
-            if (currentDate.get(Calendar.MONTH) == 11) {
-                vm.updateMonthYear(0, currentYear + 1)
-            } else {
-                vm.updateMonthYear(currentMonth + 1, currentYear)
-            }
-//              Navigate to the current destination
-            currentDestination?.let { destination ->
-                navController.navigate(destination)
-            }
-        }) {
-            Icon(
-                painter = painterResource(id = R.drawable.next),
-                contentDescription = null,
-                modifier = Modifier.size(20.dp).padding(0.dp)
-            )
-        }
-
-        DisposableEffect(currentDate) {
-            // This block will be executed when currentDate changes
-            onDispose {
-                date =
-                    "${months[currentDate.get(Calendar.MONTH)]} ${currentDate.get(Calendar.YEAR)}"
-            }
-        }
-
-
-    }
-
-}
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun MonthPicker(
+fun MonthYearPicker(
     visible: Boolean,
     currentMonth: Int,
     currentYear: Int,
@@ -415,3 +259,129 @@ fun MonthPicker(
     }
 
 }
+//@Composable
+//fun MonthYearDisplay(navController: NavController, vm: XMViewModel) {
+//    var visible by remember { mutableStateOf(false) }
+//    val currentDate = vm.selectedDate.value
+//    var currentMonth by remember {
+//        mutableStateOf(currentDate.get(Calendar.MONTH))
+//    }
+//    var currentYear by remember {
+//        mutableStateOf(currentDate.get(Calendar.YEAR))
+//    }
+//    val months = listOf(
+//        "JAN",
+//        "FEB",
+//        "MAR",
+//        "APR",
+//        "MAY",
+//        "JUN",
+//        "JUL",
+//        "AUG",
+//        "SEP",
+//        "OCT",
+//        "NOV",
+//        "DEC"
+//    )
+//    var date by remember {
+//        mutableStateOf(
+//            "${months[currentDate.get(Calendar.MONTH)]} ${
+//                currentDate.get(
+//                    Calendar.YEAR
+//                )
+//            }"
+//        )
+//    }
+//    // Get the current navBackStackEntry
+//    val navBackStackEntry by navController.currentBackStackEntryAsState()
+//
+//    // Get the current destination route
+//    val currentDestination = navBackStackEntry?.destination?.route
+//    Row(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .padding(0.dp),
+//        horizontalArrangement = Arrangement.Center,
+//        verticalAlignment = Alignment.CenterVertically
+//    ) {
+//
+//        IconButton(onClick = {
+//            if (currentDate.get(Calendar.MONTH) == 0) {
+//                vm.updateMonthYear(11, currentYear - 1)
+//            } else {
+//                vm.updateMonthYear(currentMonth - 1, currentYear)
+//            }
+////              Navigate to the current destination
+//            currentDestination?.let { destination ->
+//                navController.navigate(destination)
+//            }
+//        }) {
+//            Icon(
+//                painter = painterResource(id = R.drawable.previous),
+//                contentDescription = null,
+//                modifier = Modifier.size(20.dp).padding(0.dp)
+//            )
+//        }
+//        Text(
+//            text = date,
+//            fontWeight = FontWeight.Bold,
+//            color = Color(0XFF3864C3),
+//            textAlign = TextAlign.Center,
+//            modifier = Modifier
+//                .weight(1f)
+//                .padding(0.dp)
+//                .clickable {
+//                    visible = true
+//                }
+//        )
+//
+//        MonthYearPicker(
+//            visible = visible,
+//            currentMonth = currentMonth,
+//            currentYear = currentYear,
+//            confirmButtonCLicked = { month_, year_ ->
+//
+//                visible = false
+//                vm.updateMonthYear(month_, year_)
+////              Navigate to the current destination
+//                currentDestination?.let { destination ->
+//                    navController.navigate(destination)
+//                }
+//            },
+//            cancelClicked = {
+//                visible = false
+//            }
+//        )
+//
+//        IconButton(onClick = {
+//            if (currentDate.get(Calendar.MONTH) == 11) {
+//                vm.updateMonthYear(0, currentYear + 1)
+//            } else {
+//                vm.updateMonthYear(currentMonth + 1, currentYear)
+//            }
+////              Navigate to the current destination
+//            currentDestination?.let { destination ->
+//                navController.navigate(destination)
+//            }
+//        }) {
+//            Icon(
+//                painter = painterResource(id = R.drawable.next),
+//                contentDescription = null,
+//                modifier = Modifier.size(20.dp).padding(0.dp)
+//            )
+//        }
+//
+//        DisposableEffect(currentDate) {
+//            // This block will be executed when currentDate changes
+//            onDispose {
+//                date =
+//                    "${months[currentDate.get(Calendar.MONTH)]} ${currentDate.get(Calendar.YEAR)}"
+//            }
+//        }
+//
+//
+//    }
+//
+//}
+
+
