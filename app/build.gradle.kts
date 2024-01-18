@@ -85,6 +85,11 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:$nav_version")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
     implementation ("androidx.navigation:navigation-compose:2.4.0-alpha09")
+    implementation ("androidx.compose.material3:material3:1.1.2")
+    implementation ("androidx.compose.material:material:1.3.1")
+    implementation ("com.google.accompanist:accompanist-flowlayout:0.27.0")
+    implementation("androidx.compose.animation:animation:1.5.4")
+
 
 
 }

@@ -44,7 +44,7 @@ fun CheckSignedIn(vm: XMViewModel, navController: NavHostController){
     val signIn= vm.signedIn.value
     if(signIn && !alreadySignIn.value){
         alreadySignIn.value = true
-        navController.navigate(DestinationScreen.Daily.route){
+        navController.navigate(DestinationScreen.Transactions.route){
             popUpTo(0)
         }
 

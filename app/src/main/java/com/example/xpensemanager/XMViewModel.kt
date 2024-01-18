@@ -1,18 +1,21 @@
 package com.example.xpensemanager
 
 import android.util.Log
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.xpensemanager.Data.Event
 import com.example.xpensemanager.Data.USER_NODE
 import com.example.xpensemanager.Data.UserData
+import com.example.xpensemanager.Screens.MonthYearDisplay
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.lang.Exception
 import javax.inject.Inject
+import java.util.Calendar
 import kotlin.math.log
 
 @HiltViewModel
@@ -26,33 +29,37 @@ class XMViewModel @Inject constructor(
     val eventMutableState = mutableStateOf<Event<String>?>(null)
     var signedIn = mutableStateOf(false)
     val userData = mutableStateOf<UserData?>(null)
+    private var _selectedDate = mutableStateOf(Calendar.getInstance())
+    val selectedDate: MutableState<Calendar> = _selectedDate
+
 
     init {
         val currentUser = auth.currentUser
-        signedIn.value = currentUser!=null
-        currentUser?.uid?.let{
+        signedIn.value = currentUser != null
+        currentUser?.uid?.let {
             getUserData(it)
         }
 
     }
+
     fun signUp(name: String, email: String, password: String) {
         inProcess.value = true
-        if(name.isEmpty() or email.isEmpty() or password.isEmpty()){
+        if (name.isEmpty() or email.isEmpty() or password.isEmpty()) {
             handleException(customMessage = "Please fill all fields")
             return
         }
         inProcess.value = true
-        db.collection(USER_NODE).whereEqualTo("name",name).get().addOnSuccessListener {
-            if(it.isEmpty){
+        db.collection(USER_NODE).whereEqualTo("name", name).get().addOnSuccessListener {
+            if (it.isEmpty) {
                 auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
                     if (it.isSuccessful) {
                         signedIn.value = true
-                        createOrUpdateProfile(name,email)
+                        createOrUpdateProfile(name, email)
                     } else {
                         handleException(it.exception, customMessage = "Sign Up failed")
                     }
                 }
-            } else{
+            } else {
                 handleException(customMessage = "Name already exists")
                 inProcess.value = false
             }
@@ -61,32 +68,40 @@ class XMViewModel @Inject constructor(
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
             if (it.isSuccessful) {
                 signedIn.value = true
-                createOrUpdateProfile(name,email)
+                createOrUpdateProfile(name, email)
             } else {
                 handleException(it.exception, customMessage = "Sign Up failed")
             }
         }
     }
 
-    fun logIn(email: String, password:String){
-        if(email.isEmpty() or password.isEmpty()){
+    fun logIn(email: String, password: String) {
+        if (email.isEmpty() or password.isEmpty()) {
             handleException(customMessage = "Please fill all the fields")
             return
-        } else{
+        } else {
             inProcess.value = true
-            auth.signInWithEmailAndPassword(email,password)
+            auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener {
-                    if(it.isSuccessful){
+                    if (it.isSuccessful) {
                         signedIn.value = true
-                        inProcess.value=false
-                        auth.currentUser?.uid?.let{
+                        inProcess.value = false
+                        auth.currentUser?.uid?.let {
                             getUserData(it)
                         }
-                    }else{
+                    } else {
                         handleException(exception = it.exception, customMessage = "Login failed")
                     }
                 }
         }
+    }
+
+    fun updateMonthYear(month: Int, year: Int) {
+        val updatedCalendar = _selectedDate.value.apply {
+            set(Calendar.MONTH, month)
+            set(Calendar.YEAR, year)
+        }
+        _selectedDate.value = updatedCalendar
     }
 
     fun handleException(exception: Exception? = null, customMessage: String = "") {
@@ -97,39 +112,39 @@ class XMViewModel @Inject constructor(
         eventMutableState.value = Event(message)
         inProcess.value = false
     }
-    fun createOrUpdateProfile(name: String?=null,email : String?=null){
+
+    fun createOrUpdateProfile(name: String? = null, email: String? = null) {
         var uid = auth.currentUser?.uid
         val userData = UserData(
             userId = uid,
-            name= name?:userData.value?.name,
-            email = email?:userData.value?.email
+            name = name ?: userData.value?.name,
+            email = email ?: userData.value?.email
         )
-        uid?.let{
+        uid?.let {
             inProcess.value = true
             db.collection(USER_NODE).document(uid).get().addOnSuccessListener {
-                if(it.exists()){
+                if (it.exists()) {
                     // update user data
 
-                } else{
+                } else {
                     db.collection(USER_NODE).document(uid).set(userData)
-                    inProcess.value= false
+                    inProcess.value = false
                     getUserData(uid)
                 }
             }
-                .addOnFailureListener{
-                    handleException(it,"Cannot Retrieve User")
+                .addOnFailureListener {
+                    handleException(it, "Cannot Retrieve User")
                 }
         }
     }
 
-    private fun getUserData(uid:String) {
+    private fun getUserData(uid: String) {
         inProcess.value = true
-        db.collection(USER_NODE).document(uid).addSnapshotListener{
-            value, error->
-            if(error!=null){
-                handleException(error,"Can not retrieve User")
+        db.collection(USER_NODE).document(uid).addSnapshotListener { value, error ->
+            if (error != null) {
+                handleException(error, "Can not retrieve User")
             }
-            if(value!=null){
+            if (value != null) {
                 var user = value.toObject<UserData>()
                 userData.value = user
                 inProcess.value = false

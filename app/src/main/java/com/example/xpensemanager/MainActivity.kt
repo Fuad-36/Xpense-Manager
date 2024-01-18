@@ -23,6 +23,7 @@ import com.example.xpensemanager.Screens.DailyScreen
 import com.example.xpensemanager.Screens.LoginScreen
 import com.example.xpensemanager.Screens.MonthlyScreen
 import com.example.xpensemanager.Screens.NotesScreen
+import com.example.xpensemanager.Screens.ProfileScreen
 import com.example.xpensemanager.Screens.SignUpScreen
 import com.example.xpensemanager.Screens.StatsExpenseScreen
 import com.example.xpensemanager.Screens.StatsIncomeScreen
@@ -45,6 +46,7 @@ sealed class DestinationScreen(var route: String) {
     object Transactions : DestinationScreen("trans")
     object Statistics : DestinationScreen("stats")
     object Budget : DestinationScreen("budget")
+    object Profile : DestinationScreen("profile")
 
 
 }
@@ -68,7 +70,52 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+    @Composable
+    fun XMNavigation(){
+        val navController = rememberNavController()
+        var vm = hiltViewModel<XMViewModel>()
+        NavHost(navController= navController, startDestination = DestinationScreen.SignUp.route){
+            composable(DestinationScreen.SignUp.route){
+                SignUpScreen(navController,vm)
+            }
+            composable(DestinationScreen.LogIn.route){
+                LoginScreen(navController,vm)
+            }
+            composable(DestinationScreen.Transactions.route) {
+                TransScreen(navController, vm)
+            }
+            composable(DestinationScreen.Statistics.route) {
+                StatsScreen(navController, vm)
+            }
+            composable(DestinationScreen.Budget.route) {
+                BudgetScreen(navController, vm)
+            }
+            composable(DestinationScreen.Daily.route){
+                DailyScreen(navController,vm)
+            }
+            composable(DestinationScreen.Monthly.route){
+                MonthlyScreen(navController,vm)
+            }
+            composable(DestinationScreen.Calendar.route){
+                CalendarScreen(navController,vm)
+            }
+            composable(DestinationScreen.Notes.route){
+                NotesScreen(navController,vm)
+            }
+            composable(DestinationScreen.StatsIncome.route) {
+                StatsIncomeScreen(navController, vm)
+            }
+            composable(DestinationScreen.StatsExpense.route) {
+                StatsExpenseScreen(navController, vm)
+            }
+            composable(DestinationScreen.Profile.route) {
+                ProfileScreen(navController, vm)
+            }
 
+        }
+
+
+    }
 //    // Transactions navigation graph
 //    @Composable
 //    fun TransactionsNavGraph(navController: NavHostController, vm: XMViewModel) {
@@ -138,48 +185,6 @@ class MainActivity : ComponentActivity() {
 //        }
 //    }
 
-    @Composable
-    fun XMNavigation(){
-        val navController = rememberNavController()
-        var vm = hiltViewModel<XMViewModel>()
-        NavHost(navController= navController, startDestination = DestinationScreen.SignUp.route){
-            composable(DestinationScreen.SignUp.route){
-                SignUpScreen(navController,vm)
-            }
-            composable(DestinationScreen.LogIn.route){
-                LoginScreen(navController,vm)
-            }
-            composable(DestinationScreen.Transactions.route) {
-                TransScreen(navController, vm)
-            }
-            composable(DestinationScreen.Statistics.route) {
-                StatsScreen(navController, vm)
-            }
-            composable(DestinationScreen.Budget.route) {
-                BudgetScreen(navController, vm)
-            }
-            composable(DestinationScreen.Daily.route){
-                DailyScreen(navController,vm)
-            }
-            composable(DestinationScreen.Monthly.route){
-                MonthlyScreen(navController,vm)
-            }
-            composable(DestinationScreen.Calendar.route){
-                CalendarScreen(navController,vm)
-            }
-            composable(DestinationScreen.Notes.route){
-                NotesScreen(navController,vm)
-            }
-            composable(DestinationScreen.StatsIncome.route) {
-                StatsIncomeScreen(navController, vm)
-            }
-            composable(DestinationScreen.StatsExpense.route) {
-                StatsExpenseScreen(navController, vm)
-            }
 
-        }
-
-
-    }
 }
 

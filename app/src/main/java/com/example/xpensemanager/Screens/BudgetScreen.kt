@@ -6,4 +6,6 @@ import com.example.xpensemanager.XMViewModel
 
 @Composable
 fun BudgetScreen (navController: NavController, vm: XMViewModel){
+    BottomNavigationMenu(selectedItem = BottomNavigationItem.BUDGET, navController = navController)
+
 }

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.navigation.NavController
 import com.example.xpensemanager.DestinationScreen
 import com.example.xpensemanager.R
@@ -38,7 +39,9 @@ fun BottomNavigationMenu(
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(top = 4.dp)
-            .background(Color.White)
+            .size(50.dp)
+            .background(Color(0XFFECECFA)),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         for (item in BottomNavigationItem.values()) {
             Image(
@@ -50,8 +53,9 @@ fun BottomNavigationMenu(
                     .clickable {
                         navigateTo(navController, item.navDestination.route)
                     },
+
                 colorFilter = if (item == selectedItem) {
-                    ColorFilter.tint(color = Color.Red)
+                    ColorFilter.tint(Color(0XFF5B67CA))
                 } else {
                     ColorFilter.tint(Color.Black)
                 }
