@@ -2,10 +2,12 @@ package com.example.xpensemanager
 
 import android.util.Log
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.xpensemanager.Data.Event
+import com.example.xpensemanager.Data.Transaction
 import com.example.xpensemanager.Data.USER_NODE
 import com.example.xpensemanager.Data.UserData
 import com.example.xpensemanager.Screens.MonthYearPicker
@@ -31,7 +33,8 @@ class XMViewModel @Inject constructor(
     val userData = mutableStateOf<UserData?>(null)
     private var _selectedDate = mutableStateOf(Calendar.getInstance())
     val selectedDate: MutableState<Calendar> = _selectedDate
-
+    private val _transactions = mutableStateOf<List<Transaction>>(emptyList())
+    val transactions: State<List<Transaction>> = _transactions
 
     init {
         val currentUser = auth.currentUser

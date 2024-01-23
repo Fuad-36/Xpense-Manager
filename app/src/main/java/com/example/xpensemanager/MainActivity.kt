@@ -5,18 +5,24 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.xpensemanager.Screens.BottomNavigationMenu
 import com.example.xpensemanager.Screens.BudgetScreen
 import com.example.xpensemanager.Screens.CalendarScreen
 import com.example.xpensemanager.Screens.DailyScreen
@@ -70,16 +76,22 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
     @Composable
-    fun XMNavigation(){
+    fun XMNavigation() {
         val navController = rememberNavController()
         var vm = hiltViewModel<XMViewModel>()
-        NavHost(navController= navController, startDestination = DestinationScreen.SignUp.route){
-            composable(DestinationScreen.SignUp.route){
-                SignUpScreen(navController,vm)
+
+        NavHost(
+            navController = navController,
+            startDestination = DestinationScreen.SignUp.route
+
+        ) {
+            composable(DestinationScreen.SignUp.route) {
+                SignUpScreen(navController, vm)
             }
-            composable(DestinationScreen.LogIn.route){
-                LoginScreen(navController,vm)
+            composable(DestinationScreen.LogIn.route) {
+                LoginScreen(navController, vm)
             }
             composable(DestinationScreen.Transactions.route) {
                 TransScreen(navController, vm)
@@ -90,17 +102,17 @@ class MainActivity : ComponentActivity() {
             composable(DestinationScreen.Budget.route) {
                 BudgetScreen(navController, vm)
             }
-            composable(DestinationScreen.Daily.route){
-                DailyScreen(navController,vm)
+            composable(DestinationScreen.Daily.route) {
+                DailyScreen(navController, vm)
             }
-            composable(DestinationScreen.Monthly.route){
-                MonthlyScreen(navController,vm)
+            composable(DestinationScreen.Monthly.route) {
+                MonthlyScreen(navController, vm)
             }
-            composable(DestinationScreen.Calendar.route){
-                CalendarScreen(navController,vm)
+            composable(DestinationScreen.Calendar.route) {
+                CalendarScreen(navController, vm)
             }
-            composable(DestinationScreen.Notes.route){
-                NotesScreen(navController,vm)
+            composable(DestinationScreen.Notes.route) {
+                NotesScreen(navController, vm)
             }
             composable(DestinationScreen.StatsIncome.route) {
                 StatsIncomeScreen(navController, vm)
