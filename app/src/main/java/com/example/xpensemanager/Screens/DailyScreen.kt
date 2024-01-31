@@ -42,6 +42,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
@@ -99,11 +100,16 @@ fun DailyScreen(navController: NavController, vm: XMViewModel) {
                 LazyColumn {
                     items(innerMapKeys) { innerMapkey ->
                         val dateString = "$keyString-$innerMapkey"
-                        val innerMap: Map<String, MutableList<TransactionDetails>> =
+                        val transactionDetailsMap: Map<String, MutableList<TransactionDetails>> =
                             transactionsList.value[keyString] ?: emptyMap()
-                        TransactionCard(transactionDetailsMap = innerMap, dateString = dateString)
+
+                        TransactionCard(
+                            transactionDetailsMap = transactionDetailsMap,
+                            dateString = dateString
+                        )
 
                     }
+
                 }
 
             }
@@ -128,6 +134,49 @@ fun DailyScreen(navController: NavController, vm: XMViewModel) {
         },
     )
 
+}
+
+
+@Composable
+fun MenuAndDate(dayOfMonth: String, dayOfWeek: String, MonthYear: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(1.dp)
+    ) {
+        var expanded by remember { mutableStateOf(false) }
+
+        IconButton(
+            onClick = { expanded = true }
+        ) {
+            Icon(
+                Icons.Default.MoreVert, contentDescription = null,
+                modifier = Modifier.padding(1.dp)
+            )
+        }
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier.widthIn(140.dp) // Adjust the width of the DropdownMenu
+        ) {
+            DropdownMenuItem(
+                text = { Text("Delete") }, // Use Text() to display text content
+                onClick = { /*TODO*/ },
+                modifier = Modifier.widthIn(140.dp)
+            )
+        }
+
+        Text(
+            text = dayOfMonth,
+            fontWeight = FontWeight.Bold
+        )
+
+        ColoredBackgroundText(
+            text = dayOfWeek,
+            backgroundColor = Color(0XFFADB4ED),
+            textColor = Color.White
+        )
+        Text(text = MonthYear, fontSize = 9.sp)
+    }
 }
 
 //Map<String, MutableList<TransactionDetails>> map<"sun-15"<list
@@ -168,22 +217,8 @@ fun TransactionCard(
 
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                MenuAndDate("$dayOfMonth", "$dayOfWeek", "$month.$year")
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(1.dp)
-                ) {
-
-                    Menu()
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = "$dayOfMonth",
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    ColoredBackgroundText(text = "$dayOfWeek", backgroundColor = Color(0XFFADB4ED), textColor = Color.White)
-                    Text(text = "$month.$year", fontSize = 9.sp)
-                }
                 var totalIncome = 0.0
                 var totalExpense = 0.0
                 val transList = transactionDetailsMap[keyString]
@@ -203,8 +238,8 @@ fun TransactionCard(
             val detailsList = transactionDetailsMap[keyString]
 
             if (detailsList != null) {
-                LazyColumn(modifier = Modifier.height(100.dp)) {
-                    items(detailsList) { details ->
+                Column {
+                    detailsList.forEach { details ->
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -230,6 +265,7 @@ fun TransactionCard(
     }
 }
 
+
 @Composable
 fun Menu() {
     var expanded by remember { mutableStateOf(false) }
@@ -244,10 +280,17 @@ fun Menu() {
                 modifier = Modifier.padding(4.dp)
             )
         }
-        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            DropdownMenuItem(text = { "D" }, onClick = { /*TODO*/ },
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier.widthIn(140.dp) // Adjust the width of the DropdownMenu
+        ) {
+            DropdownMenuItem(
+                text = { Text("Delete") }, // Use Text() to display text content
+                onClick = { /*TODO*/ },
                 modifier = Modifier.widthIn(140.dp)
             )
         }
     }
 }
+
