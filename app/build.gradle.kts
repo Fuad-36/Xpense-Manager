@@ -89,6 +89,11 @@ dependencies {
     implementation ("androidx.compose.material:material:1.3.1")
     implementation ("com.google.accompanist:accompanist-flowlayout:0.27.0")
     implementation("androidx.compose.animation:animation:1.5.4")
+    implementation ("io.github.vanpra.compose-material-dialogs:datetime:0.8.1-rc")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
+    implementation ("androidx.annotation:annotation:1.3.0")
+
 
 
 

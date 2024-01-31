@@ -19,3 +19,13 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+# Keep all fields in the Transaction class
+# Keep the Transaction class and its methods
+-keep class com.example.xpensemanager.Data.Transaction {
+    <methods>;
+}
+
+# Keep the no-argument constructor
+-keepclassmembers class com.example.xpensemanager.Data.Transaction {
+    <init>();
+}

@@ -22,6 +22,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.xpensemanager.Screens.AddTransactionsScreen
 import com.example.xpensemanager.Screens.BottomNavigationMenu
 import com.example.xpensemanager.Screens.BudgetScreen
 import com.example.xpensemanager.Screens.CalendarScreen
@@ -45,8 +46,8 @@ sealed class DestinationScreen(var route: String) {
     object Monthly : DestinationScreen("monthly")
     object Calendar : DestinationScreen("calendar")
     object Notes : DestinationScreen("notes")
-    object AddIncome : DestinationScreen("addIncome")
-    object AddExpense : DestinationScreen("addExpense")
+    object AddTransaction : DestinationScreen("addTransaction")
+
     object StatsIncome : DestinationScreen("statsIncome")
     object StatsExpense : DestinationScreen("statsExpense")
     object Transactions : DestinationScreen("trans")
@@ -122,6 +123,9 @@ class MainActivity : ComponentActivity() {
             }
             composable(DestinationScreen.Profile.route) {
                 ProfileScreen(navController, vm)
+            }
+            composable(DestinationScreen.AddTransaction.route) {
+                AddTransactionsScreen(navController, vm)
             }
 
         }
