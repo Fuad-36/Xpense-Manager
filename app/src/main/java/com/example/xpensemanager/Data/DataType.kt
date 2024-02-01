@@ -20,7 +20,7 @@ data class UserData(
 }
 @Keep
 data class Transaction(
-    val id: String = UUID.randomUUID().toString(),
+    val id: String = "",
     val type: TransactionType,
     val category: String,
     val amount: Double,

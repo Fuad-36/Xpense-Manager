@@ -76,6 +76,23 @@ class XMViewModel @Inject constructor(
             }
         }
     }
+    val IdTransactionsMap: State<Map<String, Map<String, List<String>>>> = derivedStateOf {
+        transactions.value.groupBy { transaction ->
+            // Use the month-year as the outer key
+            transaction.getMonthYearKey()
+        }.mapValues { (_, transactions) ->
+            // For each month-year group, create a map with day of the week-day of the month as the key
+            transactions.groupBy { transaction ->
+                transaction.getDayOfWeekAndMonthKey()
+            }.mapValues { (_, transactionsOfDay) ->
+                // For each day, create a list of transaction IDs
+                transactionsOfDay.map { transaction ->
+                    transaction.id
+                }.toList()
+            }
+        }
+    }
+
 
 
     init {
@@ -97,7 +114,7 @@ class XMViewModel @Inject constructor(
             return
         }
         inProcess.value = true
-        db.collection(USER_NODE).whereEqualTo("name", name).get().addOnSuccessListener {
+        db.collection(USER_NODE).whereEqualTo("email", email).get().addOnSuccessListener {
             if (it.isEmpty) {
                 auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
                     if (it.isSuccessful) {
@@ -151,14 +168,13 @@ class XMViewModel @Inject constructor(
         }
         _selectedDate.value = updatedCalendar
     }
-    fun onTransactionSave(transaction: Transaction,context:Context){
+    fun onTransactionSave(transaction: Transaction, context: Context) {
         // Add transaction to the local state
-        if(transaction.category.isEmpty() or transaction.amount.equals(0.0)) {
+        if (transaction.category.isEmpty() or transaction.amount.equals(0.0)) {
             handleException(customMessage = "Please fill all the fields")
-            Toast.makeText(context,"please fill",Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "please fill", Toast.LENGTH_SHORT).show()
             return
         }
-        _transactions.value = _transactions.value + transaction
 
         // Add transaction to Firestore
         val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid
@@ -166,10 +182,26 @@ class XMViewModel @Inject constructor(
             val userRef = FirebaseFirestore.getInstance().collection("user").document(currentUserUid)
             val transactionsRef = userRef.collection("transactions")
 
-            transactionsRef.add(transaction)
 
+            // Add the transaction to Firestore
+            val newTransactionRef = transactionsRef.document() // Automatically generates a new document ID
+            val transactionId = newTransactionRef.id
+            val updatedTransaction = transaction.copy(id = transactionId)
+
+            newTransactionRef
+                .set(updatedTransaction)
+                .addOnSuccessListener {
+                    // Update the local state with the transaction ID
+                    _transactions.value = _transactions.value + updatedTransaction
+                }
+                .addOnFailureListener { e ->
+                    // Handle failure
+                    handleException(e, "Transaction save failed")
+                    Toast.makeText(context, "Transaction save failed", Toast.LENGTH_SHORT).show()
+                }
         }
     }
+
 
     fun handleException(exception: Exception? = null, customMessage: String = "") {
         Log.e("XMApp", "XM exception: ", exception)
@@ -246,6 +278,31 @@ class XMViewModel @Inject constructor(
                 handleException(e,"Cannot retrieve the thransaciton data")
             }
         }
+
+    }
+    fun deleteTransactions(transactionIds: List<String>){
+        //update local state
+        _transactions.value = _transactions.value.filterNot { transaction->
+            transaction.id in transactionIds
+        }
+        // update firestore
+        val currentUserUid = auth.currentUser?.uid
+        if(currentUserUid!=null){
+            val userRef = FirebaseFirestore.getInstance().collection(USER_NODE).document(currentUserUid)
+            val transactionsRef = userRef.collection("transactions")
+
+            // Delete transactions from Firestore
+            transactionIds.forEach { transactionId ->
+                transactionsRef.document(transactionId).delete()
+            }
+        }
+    }
+    fun logOut(context: Context){
+        auth.signOut()
+        signedIn.value=false
+        userData.value=null
+        eventMutableState.value=Event("Logged Out")
+        Toast.makeText(context,"Logged Out", Toast.LENGTH_SHORT).show()
     }
 
 

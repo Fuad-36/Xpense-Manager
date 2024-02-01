@@ -25,12 +25,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.xpensemanager.CommonDivider
 import com.example.xpensemanager.Data.Transaction
 import com.example.xpensemanager.Data.TransactionType
 import com.example.xpensemanager.DestinationScreen
@@ -76,6 +78,7 @@ fun AddTransactionsScreen(
         }) {
             Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = null)
         }
+        CommonDivider()
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -107,10 +110,19 @@ fun AddTransactionsScreen(
             }
         }
         val dateDialogState = rememberMaterialDialogState()
-        Text(
-            text = "Date: $formattedDate",
-            modifier = Modifier.clickable(onClick = { dateDialogState.show() })
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(4.dp),
+            verticalAlignment = Alignment.CenterVertically
         )
+        {
+            Text("Date       :     ")
+            Text(
+                text = "$formattedDate",
+                modifier = Modifier.clickable(onClick = { dateDialogState.show() })
+            )
+        }
         MaterialDialog(
             dialogState = dateDialogState,
             buttons = {
@@ -134,26 +146,40 @@ fun AddTransactionsScreen(
 
         }
 
-
-        Text("Category:")
-        OutlinedTextField(
-            value = selectedCategory,
-            onValueChange = { selectedCategory = it },
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp)
+                .padding(4.dp),
+            verticalAlignment = Alignment.CenterVertically
         )
+        {
+            Text("Category:")
+            OutlinedTextField(
+                value = selectedCategory,
+                onValueChange = { selectedCategory = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
-
-        Text("Amount:")
-        OutlinedTextField(
-            value = amount,
-            onValueChange = { amount = it },
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp)
+                .padding(4.dp),
+            verticalAlignment = Alignment.CenterVertically
         )
+        {
+            Text("Amount  :")
+            OutlinedTextField(
+                value = amount,
+                onValueChange = { amount = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            )
+        }
 
         Spacer(modifier = Modifier.height(32.dp))
 
@@ -173,7 +199,7 @@ fun AddTransactionsScreen(
                     amount = amount.toDoubleOrNull() ?: 0.0,
                     date = date
                 )
-                vm.onTransactionSave(transaction,context)
+                vm.onTransactionSave(transaction, context)
                 navigateTo(navController, DestinationScreen.Daily.route)
             }) {
                 Text("Save")
@@ -188,7 +214,7 @@ fun AddTransactionsScreen(
                     amount = amount.toDoubleOrNull() ?: 0.0,
                     date = date
                 )
-                vm.onTransactionSave(transaction,context)
+                vm.onTransactionSave(transaction, context)
 
                 selectedType = TransactionType.Income
                 selectedCategory = ""

@@ -93,20 +93,24 @@ fun DailyScreen(navController: NavController, vm: XMViewModel) {
                 val month = date.get(Calendar.MONTH) + 1
                 val year = date.get(Calendar.YEAR)
                 val keyString = "$month-$year"
-//                val innerMap : Map<String, MutableList<TransactionDetails>> = transactionsList[keyString]?: emptyMap()
                 val innerMapKeys: List<String> =
                     transactionsList.value[keyString]?.keys?.toList() ?: emptyList()
-
+                val idTransactionList : State<Map<String, Map<String, List<String>>>> = vm.IdTransactionsMap
+                val innerIdTransMap = idTransactionList.value[keyString]
                 LazyColumn {
                     items(innerMapKeys) { innerMapkey ->
                         val dateString = "$keyString-$innerMapkey"
                         val transactionDetailsMap: Map<String, MutableList<TransactionDetails>> =
                             transactionsList.value[keyString] ?: emptyMap()
 
-                        TransactionCard(
-                            transactionDetailsMap = transactionDetailsMap,
-                            dateString = dateString
-                        )
+                        if (innerIdTransMap != null) {
+                            TransactionCard(
+                                transactionDetailsMap = transactionDetailsMap,
+                                dateString = dateString,
+                                innerIdTransMap = innerIdTransMap,
+                                vm = vm
+                            )
+                        }
 
                     }
 
@@ -138,15 +142,15 @@ fun DailyScreen(navController: NavController, vm: XMViewModel) {
 
 
 @Composable
-fun MenuAndDate(dayOfMonth: String, dayOfWeek: String, MonthYear: String) {
+fun MenuAndDate(dayOfMonth: String, dayOfWeek: String, MonthYear: String,listForDelte:List<String>,vm: XMViewModel) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(1.dp)
     ) {
         var expanded by remember { mutableStateOf(false) }
-
         IconButton(
-            onClick = { expanded = true }
+            onClick = { expanded = true },
+            modifier = Modifier.padding(1.dp)
         ) {
             Icon(
                 Icons.Default.MoreVert, contentDescription = null,
@@ -160,9 +164,10 @@ fun MenuAndDate(dayOfMonth: String, dayOfWeek: String, MonthYear: String) {
         ) {
             DropdownMenuItem(
                 text = { Text("Delete") }, // Use Text() to display text content
-                onClick = { /*TODO*/ },
+                onClick = { vm.deleteTransactions(listForDelte)},
                 modifier = Modifier.widthIn(140.dp)
             )
+
         }
 
         Text(
@@ -184,7 +189,9 @@ fun MenuAndDate(dayOfMonth: String, dayOfWeek: String, MonthYear: String) {
 @Composable
 fun TransactionCard(
     transactionDetailsMap: Map<String, MutableList<TransactionDetails>>,
-    dateString: String
+    dateString: String,
+    innerIdTransMap:Map<String,List<String>>,
+    vm: XMViewModel
 ) {
 
 
@@ -196,6 +203,7 @@ fun TransactionCard(
     val dayOfWeek = components[2]
     val dayOfMonth = components[3].toInt()
     val keyString = "$dayOfWeek-$dayOfMonth"
+    val listForDelete = innerIdTransMap[keyString]
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -217,7 +225,9 @@ fun TransactionCard(
 
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                MenuAndDate("$dayOfMonth", "$dayOfWeek", "$month.$year")
+                if (listForDelete != null) {
+                    MenuAndDate("$dayOfMonth", "$dayOfWeek", "$month.$year",listForDelete,vm)
+                }
 
                 var totalIncome = 0.0
                 var totalExpense = 0.0

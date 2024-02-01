@@ -79,7 +79,6 @@ fun CommonTopBar(navController: NavController, vm: XMViewModel) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
-            .padding(4.dp)
             .fillMaxWidth()
             .background(Color(0XFFDEEDFF))
             .padding(8.dp),

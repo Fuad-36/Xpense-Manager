@@ -33,6 +33,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.painter.Painter
@@ -94,7 +95,8 @@ fun Taka(amount: Double, modifier: Modifier = Modifier, color: Color = Color.Bla
 fun ColoredBackgroundText(text: String, backgroundColor: Color, textColor: Color) {
     Box(
         modifier = Modifier
-            .background(color = backgroundColor,
+            .background(
+                color = backgroundColor,
                 shape = RoundedCornerShape(8.dp)
             )
             .padding(0.dp)
@@ -106,4 +108,12 @@ fun ColoredBackgroundText(text: String, backgroundColor: Color, textColor: Color
             modifier = Modifier.padding(1.dp)
         )
     }
+}
+@Composable
+fun CommonDivider(){
+    Divider(
+        color = Color.LightGray,
+        thickness = 1.dp,
+        modifier = Modifier.alpha(0.3f)
+    )
 }
