@@ -44,6 +44,7 @@ fun TransNavigationMenu(
         for (item in TransNavigationItem.values()) {
             Text(
                 text = item.title,
+                color = Color(0xFF3864C3),
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .weight(1f)

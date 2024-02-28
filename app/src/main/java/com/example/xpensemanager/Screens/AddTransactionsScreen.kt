@@ -1,6 +1,5 @@
 package com.example.xpensemanager.Screens
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -33,9 +32,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.xpensemanager.CommonDivider
+import com.example.xpensemanager.Data.ExpenseCategories
+import com.example.xpensemanager.Data.IncomeCategories
 import com.example.xpensemanager.Data.Transaction
 import com.example.xpensemanager.Data.TransactionType
 import com.example.xpensemanager.DestinationScreen
+import com.example.xpensemanager.ExpenseCategorySelection
+import com.example.xpensemanager.IncomeCategorySelection
 import com.example.xpensemanager.XMViewModel
 import com.example.xpensemanager.navigateTo
 import com.vanpra.composematerialdialogs.MaterialDialog
@@ -69,7 +72,8 @@ fun AddTransactionsScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(16.dp),
+
 
     ) {
         IconButton(onClick = {
@@ -146,22 +150,22 @@ fun AddTransactionsScreen(
 
         }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(4.dp),
-            verticalAlignment = Alignment.CenterVertically
-        )
-        {
-            Text("Category:")
-            OutlinedTextField(
-                value = selectedCategory,
-                onValueChange = { selectedCategory = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            )
+        if(selectedType == TransactionType.Income){
+            selectedCategory = IncomeCategories[0];
+            IncomeCategorySelection{ category ->
+                selectedCategory = category
+
+            }
+
         }
+        if(selectedType == TransactionType.Expense){
+            selectedCategory = ExpenseCategories[0];
+            ExpenseCategorySelection{ category ->
+                selectedCategory = category
+
+            }
+        }
+
 
         Spacer(modifier = Modifier.height(16.dp))
         Row(

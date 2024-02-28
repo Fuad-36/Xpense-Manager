@@ -8,16 +8,13 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.navigation.NavController
 import com.example.xpensemanager.Data.Event
 import com.example.xpensemanager.Data.Transaction
 import com.example.xpensemanager.Data.TransactionType
 import com.example.xpensemanager.Data.USER_NODE
 import com.example.xpensemanager.Data.UserData
-import com.example.xpensemanager.Screens.MonthYearPicker
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
@@ -25,9 +22,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import java.lang.Exception
 import javax.inject.Inject
 import java.util.Calendar
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewModelScope
+import androidx.compose.runtime.*
 import com.example.xpensemanager.Data.TransactionDetails
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -76,6 +71,7 @@ class XMViewModel @Inject constructor(
             }
         }
     }
+
     val IdTransactionsMap: State<Map<String, Map<String, List<String>>>> = derivedStateOf {
         transactions.value.groupBy { transaction ->
             // Use the month-year as the outer key
@@ -93,6 +89,23 @@ class XMViewModel @Inject constructor(
         }
     }
 
+    fun calculateTotalIncomeAndExpense(innerTransactionsMap: State<Map<String, MutableList<TransactionDetails>>>): State<Pair<Double, Double>> {
+        return derivedStateOf {
+            var totalIncome = 0.0
+            var totalExpense = 0.0
+
+            innerTransactionsMap.value.forEach { (_, transactionsList) ->
+                transactionsList.forEach { transaction ->
+                    when (transaction.type) {
+                        TransactionType.Income -> totalIncome += transaction.amount
+                        TransactionType.Expense -> totalExpense += transaction.amount
+                    }
+                }
+            }
+
+            Pair(totalIncome, totalExpense)
+        }
+    }
 
 
     init {
@@ -172,7 +185,7 @@ class XMViewModel @Inject constructor(
         // Add transaction to the local state
         if (transaction.category.isEmpty() or transaction.amount.equals(0.0)) {
             handleException(customMessage = "Please fill all the fields")
-            Toast.makeText(context, "please fill", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "please fill =${transaction.category}", Toast.LENGTH_SHORT).show()
             return
         }
 
