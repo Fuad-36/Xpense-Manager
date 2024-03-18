@@ -67,3 +67,19 @@ data class TransactionDetails(
     val category: String,
     val amount: Double
 )
+data class MonthlyBudgets(
+    val totalBudget: Int = 0,
+    val housing: Int = 0,
+    val utilities: Int = 0,
+    val transportation: Int = 0,
+    val groceries: Int = 0,
+    val healthcare: Int = 0,
+    val debtPayments: Int = 0,
+    val restaurantBills: Int = 0,
+    val entertainment: Int = 0,
+    val education: Int = 0,
+    val investments: Int = 0,
+    val taxes: Int = 0,
+    val clothing: Int = 0,
+    val other: Int = 0
+)

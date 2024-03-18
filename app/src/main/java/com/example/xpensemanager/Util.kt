@@ -115,7 +115,7 @@ fun CommonDivider(){
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IncomeCategorySelection(onCategorySelected: (String) -> Unit) {
-    val categories = IncomeCategories
+    var categories = IncomeCategories
     val (expanded, setExpanded) = remember { mutableStateOf(false) }
     var selectedCategory by remember { mutableStateOf(categories[0]) }
     val  setSelectedCategory = remember { mutableStateOf(categories[0]) }

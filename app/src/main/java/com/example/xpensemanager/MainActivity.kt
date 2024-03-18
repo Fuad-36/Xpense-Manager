@@ -25,6 +25,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.xpensemanager.Screens.AddTransactionsScreen
 import com.example.xpensemanager.Screens.BottomNavigationMenu
 import com.example.xpensemanager.Screens.BudgetScreen
+import com.example.xpensemanager.Screens.BudgetSettingScreen
 import com.example.xpensemanager.Screens.CalendarScreen
 import com.example.xpensemanager.Screens.DailyScreen
 import com.example.xpensemanager.Screens.LoginScreen
@@ -54,7 +55,7 @@ sealed class DestinationScreen(var route: String) {
     object Statistics : DestinationScreen("stats")
     object Budget : DestinationScreen("budget")
     object Profile : DestinationScreen("profile")
-
+    object BudgetSetting : DestinationScreen("budgetSetting")
 
 }
 
@@ -102,6 +103,9 @@ class MainActivity : ComponentActivity() {
             }
             composable(DestinationScreen.Budget.route) {
                 BudgetScreen(navController, vm)
+            }
+            composable(DestinationScreen.BudgetSetting.route) {
+                BudgetSettingScreen(navController, vm)
             }
             composable(DestinationScreen.Daily.route) {
                 DailyScreen(navController, vm)

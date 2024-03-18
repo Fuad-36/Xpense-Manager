@@ -23,6 +23,7 @@ import java.lang.Exception
 import javax.inject.Inject
 import java.util.Calendar
 import androidx.compose.runtime.*
+import com.example.xpensemanager.Data.MonthlyBudgets
 import com.example.xpensemanager.Data.TransactionDetails
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -48,7 +49,8 @@ class XMViewModel @Inject constructor(
     private val _transactions = mutableStateOf<List<Transaction>>(emptyList())
     val transactions: State<List<Transaction>> = _transactions
     var isTransactionScreenVisible by mutableStateOf(false)
-
+    var isBudgetSettingScreenVisible by mutableStateOf(false)
+    val monthlyBudgetsMap = mutableMapOf<String, MonthlyBudgets>()
 
     val transactionsMap: State<Map<String, Map<String, MutableList<TransactionDetails>>>> = derivedStateOf {
         transactions.value.groupBy { transaction ->
@@ -89,23 +91,7 @@ class XMViewModel @Inject constructor(
         }
     }
 
-    fun calculateTotalIncomeAndExpense(innerTransactionsMap: State<Map<String, MutableList<TransactionDetails>>>): State<Pair<Double, Double>> {
-        return derivedStateOf {
-            var totalIncome = 0.0
-            var totalExpense = 0.0
 
-            innerTransactionsMap.value.forEach { (_, transactionsList) ->
-                transactionsList.forEach { transaction ->
-                    when (transaction.type) {
-                        TransactionType.Income -> totalIncome += transaction.amount
-                        TransactionType.Expense -> totalExpense += transaction.amount
-                    }
-                }
-            }
-
-            Pair(totalIncome, totalExpense)
-        }
-    }
 
 
     init {
@@ -116,6 +102,9 @@ class XMViewModel @Inject constructor(
         }
         currentUser?.uid?.let {
             fetchTransactionsAndUpdateState(it)
+        }
+        currentUser?.uid?.let {
+            fetchMonthlyBudgets(it)
         }
 
     }
@@ -214,7 +203,30 @@ class XMViewModel @Inject constructor(
                 }
         }
     }
+    fun updateBudgetValues(monthlyBudgets: MonthlyBudgets){
+        val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid
+        val calendar = selectedDate.value // Get the selected date from the MutableState
 
+        val month = calendar.get(Calendar.MONTH) // Get the month (0-based, so January is 0)
+        val year = calendar.get(Calendar.YEAR) // Get the year
+
+// Create a formatted string representing the month and year
+        val monthYear = "${month + 1}-${year}" // Add 1 to the month to make it 1-based
+        if(currentUserUid !=null){
+            val userRef = FirebaseFirestore.getInstance().collection("user").document(currentUserUid)
+            val budgetRef = userRef.collection("budgets").document(monthYear)
+            // Set the budget settings in Firestore
+            budgetRef.set(monthlyBudgets)
+                .addOnSuccessListener {
+                    // Budget settings updated successfully
+                    monthlyBudgetsMap[monthYear] = monthlyBudgets
+                }
+                .addOnFailureListener { e ->
+                    // Handle Error
+                    handleException(e,"Budget saving failed")
+                }
+        }
+    }
 
     fun handleException(exception: Exception? = null, customMessage: String = "") {
         Log.e("XMApp", "XM exception: ", exception)
@@ -292,6 +304,24 @@ class XMViewModel @Inject constructor(
             }
         }
 
+    }
+    fun fetchMonthlyBudgets(currentUserUid: String){
+        val userRef = FirebaseFirestore.getInstance().collection("user").document(currentUserUid)
+        val budgetCollectionRef = userRef.collection("budgets")
+        // Fetch data from Firestore
+                budgetCollectionRef.get()
+                    .addOnSuccessListener { documents ->
+                        for (document in documents) {
+                            val monthYear = document.id
+                            val monthlyBudgets = document.toObject<MonthlyBudgets>()
+
+                            // Update the monthly budgets map
+                            monthlyBudgetsMap[monthYear] = monthlyBudgets
+                        }
+                    }
+                    .addOnFailureListener { e ->
+                        // Handle errors
+                    }
     }
     fun deleteTransactions(transactionIds: List<String>){
         //update local state

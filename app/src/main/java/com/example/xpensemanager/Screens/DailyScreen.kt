@@ -57,10 +57,10 @@ fun DailyScreen(navController: NavController, vm: XMViewModel) {
         content = {
             Column(modifier = Modifier.padding(it)) {
 
-                TransNavigationMenu(
-                    selectedItem = TransNavigationItem.DAILY,
-                    navController = navController
-                )
+//                TransNavigationMenu(
+//                    selectedItem = TransNavigationItem.DAILY,
+//                    navController = navController
+//                )
 
 
                 if (vm.isTransactionScreenVisible) {

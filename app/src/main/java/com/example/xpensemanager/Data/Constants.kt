@@ -24,3 +24,19 @@ val ExpenseCategories = listOf("Housing",
     "Clothing",
     "Other"
 )
+val TotalExpenseCategories = listOf(
+    "Total Budget",
+    "Housing",
+    "Utilities",
+    "Transportation",
+    "Groceries",
+    "Healthcare",
+    "Debt Payments",
+    "Restaurant Bills",
+    "Entertainment",
+    "Education",
+    "Investments",
+    "Taxes",
+    "Clothing",
+    "Other"
+)

@@ -76,11 +76,18 @@ fun AddTransactionsScreen(
 
 
     ) {
-        IconButton(onClick = {
-            vm.isTransactionScreenVisible = false
-            navController.navigate(DestinationScreen.Daily.route)
-        }) {
-            Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = null)
+
+        Row (
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            IconButton(onClick = {
+                vm.isTransactionScreenVisible = false
+                navController.navigate(DestinationScreen.Daily.route)
+            }) {
+                Icon(imageVector = Icons.Filled.ArrowBack, contentDescription = null)
+            }
+            Text(text = "Set your Daily Transactions", fontWeight = FontWeight.Bold)
         }
         CommonDivider()
         Row(
@@ -151,7 +158,7 @@ fun AddTransactionsScreen(
         }
 
         if(selectedType == TransactionType.Income){
-            selectedCategory = IncomeCategories[0];
+//            selectedCategory = IncomeCategories[0];
             IncomeCategorySelection{ category ->
                 selectedCategory = category
 
@@ -159,7 +166,7 @@ fun AddTransactionsScreen(
 
         }
         if(selectedType == TransactionType.Expense){
-            selectedCategory = ExpenseCategories[0];
+//            selectedCategory = ExpenseCategories[0];
             ExpenseCategorySelection{ category ->
                 selectedCategory = category
 
@@ -204,7 +211,8 @@ fun AddTransactionsScreen(
                     date = date
                 )
                 vm.onTransactionSave(transaction, context)
-                navigateTo(navController, DestinationScreen.Daily.route)
+                vm.isTransactionScreenVisible = false
+                navigateTo(navController,DestinationScreen.Daily.route)
             }) {
                 Text("Save")
             }
